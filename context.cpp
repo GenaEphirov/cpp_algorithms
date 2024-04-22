@@ -11,6 +11,13 @@ void print_ch(char* lt, int l){
     } cout << "\n";
 }
 
+void print_v_int(vector<int> v){
+    int v_s = v.size();
+    for(int i = 0; i < v_s; ++i){
+        cout << v[i] << " ";
+    } cout << "\n";
+}
+
 void print_matrix(vector<vector<int>> v){
     int v_l = v.size();
     for(int i = 0; i < v_l; ++i){
@@ -124,10 +131,47 @@ int tic_tac_toe(vector<vector<int>> v){
     return result;
 }
 
+/*
+4. 
+Написать функцию которая принимает 
+C - список цен на товар на n дней вперед, 
+K - кол-во дней за которое товар приходит в негодность (включая день покупки),
+N - ежедневное потребление товара;
+и возвращает  список P - кол-во товара которое нужно купить в каждый из дней чтобы сумма получилась минимальной
+*/
+
+vector<int> optimized_purchases(vector<int> C, int K, int N){
+    int c_l = C.size();
+    vector<int> P(c_l);
+    vector<bool> supplied(c_l);
+    for(int i = 0; i < c_l; ++i){
+        P[i] = 0;
+        supplied[i] = false;
+    }
+
+    for(int i = 0; i < c_l; ++i){
+        if(!supplied[i]){
+            P[i] += N;
+            supplied[i] = true;
+        }
+        for(int k=1; k < K; ++k){
+            if (i+k == c_l){ break; }
+            if(C[i] >= C[i+k]){ break; }
+            else if(!supplied[i+k] && C[i] < C[i+k]){
+                P[i] += N;
+                supplied[i+k] = true;
+            }
+        }
+    }
+    return P;
+}
+
 int main(){
+    // 2.
     string t_s = "12389<left><bspace><delete>45";
     cout << t_s << " -> " << trainer(t_s) << "\n";
     
+    // 3.
     vector<vector<int>> board{
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0},
@@ -138,21 +182,11 @@ int main(){
         {0, 2, 0, 0, 0, 0, 0, 0},
         {2, 0, 0, 0, 0, 0, 0, 0}
     };
-    
-    /*
-    vector<vector<int>> board( 8, vector<int>( 8 ) );
-    for (int i = 0; i < 8; ++i){
-        for(int j = 0; j < 8; ++j){
-            if (i+j == 7 && i >= 3)
-            { board[i][j] = 2; }
-            else if (i == 3 && 1 <= j && j <= 4)
-            { board[i][j] = 1; }
-            else 
-            { board[i][j] = 0; }
-        }
-    }
-    */
     cout << "tic tac toe winner... " << tic_tac_toe(board) << "\n";
+
+    //4. 
+    vector<int> costs{1, 2, 3, 4, 5, 6, 7};
+    print_v_int(optimized_purchases(costs, 3, 1));
 
     int wait;
     cin >> wait;
